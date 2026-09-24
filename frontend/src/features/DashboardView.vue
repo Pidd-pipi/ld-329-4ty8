@@ -6,6 +6,7 @@
       <MetricCard label="已发布技能" :value="overview.metrics.skills" />
       <MetricCard label="活跃需求" :value="overview.metrics.needs" />
       <MetricCard label="智能匹配" :value="overview.metrics.matches" />
+      <MetricCard label="进行中预约" :value="appointmentStore.activeCount" highlight />
       <MetricCard label="评价记录" :value="overview.metrics.reviews" />
     </section>
 
@@ -37,23 +38,24 @@
       <div class="panel">
         <h2>智能匹配</h2>
         <FeatureCard v-for="match in overview.matches" :key="match.id" :title="`${match.provider} × ${match.learner}`" :description="match.recommendation">
-          <template #tag><el-tag type="warning">{{ match.score }}%</el-tag></template>
+          <template #tag>
+            <el-tag type="warning">{{ match.score }}%</el-tag>
+          </template>
           <p class="muted">{{ match.offerSkill }} ↔ {{ match.wantedSkill }}</p>
           <div class="tag-row">
             <el-tag v-for="slot in match.commonSlots" :key="slot">{{ slot }}</el-tag>
+          </div>
+          <div class="match-actions">
+            <el-button type="primary" size="small" @click="openCreateDialog(match)">
+              发起预约
+            </el-button>
           </div>
         </FeatureCard>
       </div>
 
       <div class="panel">
         <h2>预约确认</h2>
-        <el-timeline>
-          <el-timeline-item v-for="item in overview.appointments" :key="item.id" :timestamp="item.time">
-            <strong>{{ item.pair }}</strong>
-            <p>{{ item.place }} · {{ item.status }}</p>
-            <p class="muted">{{ item.agenda }}</p>
-          </el-timeline-item>
-        </el-timeline>
+        <AppointmentPanel />
       </div>
 
       <div class="panel profile-panel">
@@ -83,25 +85,43 @@
         </FeatureCard>
       </div>
     </section>
+
+    <AppointmentCreateDialog v-model="dialogVisible" :match="selectedMatch" />
   </main>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import AppHeader from '../components/AppHeader.vue';
+import AppointmentCreateDialog from '../components/AppointmentCreateDialog.vue';
+import AppointmentPanel from '../components/AppointmentPanel.vue';
 import FeatureCard from '../components/FeatureCard.vue';
 import MetricCard from '../components/MetricCard.vue';
 import RadarChart from '../components/RadarChart.vue';
+import { logger } from '../logger/logger';
 import { fetchOverview } from '../services/storage.service';
-import type { Overview } from '../types/domain';
+import { useAppointmentStore } from '../stores/appointment.store';
+import type { Match, Overview } from '../types/domain';
 
 const overview = ref<Overview | null>(null);
 const loading = ref(true);
 const error = ref('');
 
+const appointmentStore = useAppointmentStore();
+const dialogVisible = ref(false);
+const selectedMatch = ref<Match | null>(null);
+
+function openCreateDialog(match: Match) {
+  selectedMatch.value = match;
+  dialogVisible.value = true;
+}
+
 onMounted(async () => {
   try {
     overview.value = await fetchOverview();
+    // 用概览中的预约数据先行渲染，预约数量与列表立即可见；随后异步加载最新状态。
+    appointmentStore.seedFromOverview(overview.value.appointments);
+    appointmentStore.load(true).catch((err) => logger.warn('refresh appointments failed', err));
   } catch (err) {
     error.value = err instanceof Error ? err.message : '加载失败';
   } finally {

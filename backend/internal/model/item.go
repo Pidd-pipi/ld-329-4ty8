@@ -37,12 +37,38 @@ type Match struct {
 }
 
 type Appointment struct {
-	ID     int    `json:"id"`
-	Pair   string `json:"pair"`
-	Time   string `json:"time"`
-	Place  string `json:"place"`
-	Status string `json:"status"`
-	Agenda string `json:"agenda"`
+	ID           int    `json:"id"`
+	MatchID      int    `json:"matchId"`
+	Initiator    string `json:"initiator"`
+	Confirmer    string `json:"confirmer"`
+	Provider     string `json:"provider"`
+	Learner      string `json:"learner"`
+	OfferSkill   string `json:"offerSkill"`
+	WantedSkill  string `json:"wantedSkill"`
+	Pair         string `json:"pair"`
+	Slot         string `json:"slot"`
+	LocationType string `json:"locationType"`
+	Place        string `json:"place"`
+	Agenda       string `json:"agenda"`
+	Status       string `json:"status"`
+	StatusLabel  string `json:"statusLabel"`
+	CreatedAt    string `json:"createdAt"`
+	UpdatedAt    string `json:"updatedAt"`
+}
+
+// CreateAppointmentRequest 发起预约请求：匹配卡片、共同时段、线上会议链接或线下地点。
+type CreateAppointmentRequest struct {
+	MatchID      int    `json:"matchId"`
+	Slot         string `json:"slot"`
+	LocationType string `json:"locationType"`
+	Place        string `json:"place"`
+	Agenda       string `json:"agenda"`
+}
+
+// AppointmentMutationResult 预约变更结果：返回最新预约与全量列表，供前端立即刷新。
+type AppointmentMutationResult struct {
+	Appointment  Appointment   `json:"appointment"`
+	Appointments []Appointment `json:"appointments"`
 }
 
 type Review struct {

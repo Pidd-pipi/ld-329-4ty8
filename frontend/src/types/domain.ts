@@ -34,13 +34,42 @@ export interface Match {
   recommendation: string;
 }
 
+// 预约状态机：PENDING 待对方确认 → CONFIRMED 待完成 → COMPLETED 已完成；CONFIRMED/PENDING 可被 CANCELLED。
+export type AppointmentStatus = 'PENDING' | 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
+
+export type LocationType = 'ONLINE' | 'OFFLINE';
+
 export interface Appointment {
   id: number;
+  matchId: number;
+  initiator: string;
+  confirmer: string;
+  provider: string;
+  learner: string;
+  offerSkill: string;
+  wantedSkill: string;
   pair: string;
-  time: string;
+  slot: string;
+  locationType: LocationType;
   place: string;
-  status: string;
   agenda: string;
+  status: AppointmentStatus;
+  statusLabel: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateAppointmentPayload {
+  matchId: number;
+  slot: string;
+  locationType: LocationType;
+  place: string;
+  agenda: string;
+}
+
+export interface AppointmentMutationResult {
+  appointment: Appointment;
+  appointments: Appointment[];
 }
 
 export interface Review {

@@ -29,12 +29,7 @@ func ListMatches() []model.Match {
 	}
 }
 
-func ListAppointments() []model.Appointment {
-	return []model.Appointment{
-		{ID: 1, Pair: "林澈 ↔ 孟野", Time: "周六 10:00", Place: "东校区湖边", Status: "双方已确认", Agenda: "先拍宣传照，再约 2 次吉他课"},
-		{ID: 2, Pair: "周芮 ↔ 许安", Time: "周二 19:30", Place: "线上会议室", Status: "等待对方确认", Agenda: "导入问卷 CSV 并完成基础可视化"},
-	}
-}
+// 预约演示数据与读写逻辑见 appointment.store.go / appointment.repository.go。
 
 func ListReviews() []model.Review {
 	return []model.Review{
