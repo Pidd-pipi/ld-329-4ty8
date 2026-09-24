@@ -21,7 +21,7 @@ docker compose up -d
 - 技能发布与管理：技能描述、熟练度、可交换时间段、回报类型和作品凭证。
 - 需求发布与浏览：按类别、校区、期望时间和响应数量查看求助需求。
 - 智能匹配推荐：展示互补技能、匹配度、共同可用时间和推荐理由。
-- 交换预约与确认：记录双方确认状态、时间、地点和协商议程。
+- 交换预约与确认：在匹配卡片中选择共同时段、填写线上会议链接或线下地点后发起预约；对方确认进入待完成，交换结束标记完成。任一方已有生效预约占用该时段时会明确提示冲突并保留原安排；完成前任一方可取消，取消后时段释放可再次预约。预约区即时显示发起人、确认人和当前状态，首页生效预约数量同步更新。
 - 评价与信用体系：评分、文字评价、信用分和信用等级用于推荐权重。
 - 消息通知系统：会话未读红点、系统通知和预约提醒。
 - 个人主页与技能墙：历史交换、收到评价和 ECharts 技能雷达图。
@@ -72,6 +72,7 @@ go run ./cmd/server
 │   ├── internal/controller
 │   ├── internal/repository
 │   ├── internal/service
+│   ├── internal/validator
 │   └── Dockerfile
 ├── database
 │   └── init.sql
@@ -88,6 +89,10 @@ go run ./cmd/server
 - `GET /api/needs`
 - `GET /api/matches`
 - `GET /api/appointments`
+- `POST /api/appointments`（发起预约；时段冲突返回 `409 SLOT_CONFLICT`）
+- `POST /api/appointments/:id/confirm`（对方确认：待确认 → 待完成）
+- `POST /api/appointments/:id/complete`（标记完成：待完成 → 已完成）
+- `POST /api/appointments/:id/cancel`（任一方取消：完成前可取消并释放时段）
 - `GET /api/reviews`
 - `GET /api/messages`
 - `GET /api/profile`

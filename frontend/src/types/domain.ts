@@ -34,13 +34,42 @@ export interface Match {
   recommendation: string;
 }
 
+export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
+export type MeetingMode = 'online' | 'offline';
+
 export interface Appointment {
   id: number;
+  matchId: number;
+  initiator: string;
+  confirmer: string;
+  provider: string;
+  learner: string;
   pair: string;
-  time: string;
-  place: string;
-  status: string;
+  offerSkill: string;
+  wantedSkill: string;
+  slot: string;
+  meetingMode: MeetingMode;
+  location: string;
   agenda: string;
+  status: AppointmentStatus;
+  cancelledBy?: string;
+  createdAt: string;
+  confirmedAt?: string;
+  completedAt?: string;
+  cancelledAt?: string;
+}
+
+export interface CreateAppointmentPayload {
+  matchId: number;
+  initiator: string;
+  slot: string;
+  meetingMode: MeetingMode;
+  location: string;
+  agenda?: string;
+}
+
+export interface AppointmentActionPayload {
+  actor: string;
 }
 
 export interface Review {

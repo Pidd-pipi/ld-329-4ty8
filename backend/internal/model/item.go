@@ -36,13 +36,27 @@ type Match struct {
 	Recommendation string   `json:"recommendation"`
 }
 
+// Appointment 交换预约：记录发起人、确认人、时段、线上会议链接或线下地点及状态流转
 type Appointment struct {
-	ID     int    `json:"id"`
-	Pair   string `json:"pair"`
-	Time   string `json:"time"`
-	Place  string `json:"place"`
-	Status string `json:"status"`
-	Agenda string `json:"agenda"`
+	ID           int64  `json:"id"`
+	MatchID      int    `json:"matchId"`
+	Initiator    string `json:"initiator"`
+	Confirmer    string `json:"confirmer"`
+	Provider     string `json:"provider"`
+	Learner      string `json:"learner"`
+	Pair         string `json:"pair"`
+	OfferSkill   string `json:"offerSkill"`
+	WantedSkill  string `json:"wantedSkill"`
+	Slot         string `json:"slot"`
+	MeetingMode  string `json:"meetingMode"`
+	Location     string `json:"location"`
+	Agenda       string `json:"agenda"`
+	Status       string `json:"status"`
+	CancelledBy  string `json:"cancelledBy,omitempty"`
+	CreatedAt    string `json:"createdAt"`
+	ConfirmedAt  string `json:"confirmedAt,omitempty"`
+	CompletedAt  string `json:"completedAt,omitempty"`
+	CancelledAt  string `json:"cancelledAt,omitempty"`
 }
 
 type Review struct {

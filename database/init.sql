@@ -31,12 +31,27 @@ CREATE TABLE IF NOT EXISTS needs (
 
 CREATE TABLE IF NOT EXISTS appointments (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
-  pair_name VARCHAR(120) NOT NULL,
-  exchange_time VARCHAR(80) NOT NULL,
-  place VARCHAR(120) NOT NULL,
-  status VARCHAR(40) NOT NULL,
-  agenda TEXT NOT NULL
-);
+  match_id BIGINT NOT NULL,
+  initiator VARCHAR(80) NOT NULL COMMENT '发起人',
+  confirmer VARCHAR(80) NOT NULL DEFAULT '' COMMENT '确认人，确认前为空',
+  provider VARCHAR(80) NOT NULL COMMENT '提供方',
+  learner VARCHAR(80) NOT NULL COMMENT '学习方',
+  pair_name VARCHAR(160) NOT NULL,
+  offer_skill VARCHAR(120) NOT NULL,
+  wanted_skill VARCHAR(120) NOT NULL,
+  slot VARCHAR(80) NOT NULL COMMENT '共同时段',
+  meeting_mode VARCHAR(20) NOT NULL COMMENT 'online 线上会议 / offline 线下面对面',
+  location VARCHAR(255) NOT NULL COMMENT '线上会议链接或线下地点',
+  agenda TEXT,
+  status VARCHAR(20) NOT NULL DEFAULT 'pending' COMMENT 'pending 待确认 / confirmed 待完成 / completed 已完成 / cancelled 已取消',
+  cancelled_by VARCHAR(80) NOT NULL DEFAULT '',
+  created_at VARCHAR(32) NOT NULL,
+  confirmed_at VARCHAR(32) NOT NULL DEFAULT '',
+  completed_at VARCHAR(32) NOT NULL DEFAULT '',
+  cancelled_at VARCHAR(32) NOT NULL DEFAULT '',
+  INDEX idx_appointment_status (status),
+  INDEX idx_appointment_slot (slot)
+) COMMENT='交换预约：pending/confirmed 占用时段，取消后释放';
 
 CREATE TABLE IF NOT EXISTS reviews (
   id BIGINT PRIMARY KEY AUTO_INCREMENT,
